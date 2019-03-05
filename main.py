@@ -57,7 +57,6 @@ def k_means(dataset):
     print("############## Clusters ##############")
     for i in range(k):
         print(len(clusters[i]))
-        sys.stdout.flush()
     print("############## Centroids #############")
     print(centroids)
 
