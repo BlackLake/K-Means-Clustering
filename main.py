@@ -9,33 +9,20 @@ pd.set_option('display.width', 200)
 xl_file = pd.ExcelFile("Data_User_Modeling_Dataset.xls")
 dfs = pd.read_excel(xl_file)
 
+print("############## Data Set ##############")
 print(dfs)
 
 k = 4
 
 
 def initialize_clusters(dataset):
-    clusters_list = [[] for i in range(4)]
-    length = len(dataset)
-    for i in range(length):
-        rnd = randint(0, 3)
-        if rnd == 0:
-            clusters_list[0].append(dataset.iloc[i])
+    clusters_list = [[] for i in range(k)]
 
-        elif rnd == 1:
-            clusters_list[1].append(dataset.iloc[i])
+    for i in range(len(dataset)):
+        rnd = randint(0, k - 1)
+        clusters_list[rnd].append(dataset.iloc[i])
 
-        elif rnd == 2:
-            clusters_list[2].append(dataset.iloc[i])
-
-        elif rnd == 3:
-            clusters_list[3].append(dataset.iloc[i])
     clusters_np_array = np.array(clusters_list)
-    print("############## Clusters ##############")
-    print(len(clusters_np_array[0]))
-    print(len(clusters_np_array[1]))
-    print(len(clusters_np_array[2]))
-    print(len(clusters_np_array[3]))
     return clusters_np_array
 
 
@@ -51,18 +38,57 @@ def calculate_centroids(clusters):
     for i in range(len(sums)):
         for j in range(len(sums[i])):
             centroids_array[i][j] /= len(clusters[i])
-    print("############## Centroids #############")
-    print(centroids_array)
     return centroids_array
 
 
 def euclidean_distance(a, b, length):
-    pass
+    sums = 0
+    for i in range(length):
+        sums += math.pow((a[i] - b[i]), 2)
+
+    distance = math.sqrt(sums)
+    return distance
 
 
-def k_means():
-    pass
+def k_means(dataset):
+    clusters = initialize_clusters(dataset)
+    centroids = calculate_centroids(clusters)
+
+    print("############## Clusters ##############")
+    for i in range(k):
+        print(len(clusters[i]))
+        sys.stdout.flush()
+    print("############## Centroids #############")
+    print(centroids)
+
+    counter = 1
+    optimal_condition = False
+    while not optimal_condition:
+        optimal_condition = True
+        print("\n\n############## Step : " + str(counter) + " ##############")
+        counter += 1
+        temp_clusters_list = [[] for x in range(k)]
+        for i in range(len(clusters)):
+            for m in range(len(clusters[i])):
+                min_distance = euclidean_distance(centroids[0], clusters[i][m], len(centroids[0]))
+                nearest_cluster = 0
+                for j in range(len(centroids)):
+                    distance = euclidean_distance(centroids[j], clusters[i][m], len(centroids[j]))
+                    if distance < min_distance:
+                        min_distance = distance
+                        nearest_cluster = j
+                temp_clusters_list[nearest_cluster].append(clusters[i][m])
+            if i != nearest_cluster:
+                optimal_condition = False
+
+        clusters = np.array(temp_clusters_list)
+        centroids = calculate_centroids(clusters)
+
+        print("############## Clusters ##############")
+        for i in range(k):
+            print(len(clusters[i]))
+        print("############## Centroids #############")
+        print(centroids)
 
 
-clusters = initialize_clusters(dfs)
-centroids = calculate_centroids(clusters)
+k_means(dfs)
