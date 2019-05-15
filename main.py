@@ -6,13 +6,13 @@ import pandas as pd
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 200)
 
-xl_file = pd.ExcelFile("Data_User_Modeling_Dataset.xls")
+xl_file = pd.ExcelFile("iris-data.xlsx")
 dfs = pd.read_excel(xl_file)
 
 print("############## Data Set ##############")
 print(dfs)
 
-k = 4
+k = 3
 
 
 def initialize_clusters(dataset):
@@ -27,11 +27,11 @@ def initialize_clusters(dataset):
 
 
 def calculate_centroids(clusters):
-    sums = [[clusters[i][0][j] for j in range(len(clusters[i][0]) - 1)] for i in range(len(clusters))]
+    sums = [[clusters[i][0][j] for j in range(len(clusters[i][0]))] for i in range(len(clusters))]
 
     for i in range(len(clusters)):
         for j in range(len(clusters[i])):
-            for k in range(len(clusters[i][j]) - 1):
+            for k in range(len(clusters[i][j])):
                 sums[i][k] += clusters[i][j][k]
 
     centroids_array = np.array(sums)
@@ -54,18 +54,18 @@ def k_means(dataset):
     clusters = initialize_clusters(dataset)
     centroids = calculate_centroids(clusters)
 
-    print("############## Clusters ##############")
+    print("############## Cluster sizes ##############")
     for i in range(k):
         print(len(clusters[i]))
     print("############## Centroids #############")
     print(centroids)
 
-    counter = 1
+    step_counter = 1
     optimal_condition = False
     while not optimal_condition:
         optimal_condition = True
-        print("\n\n############## Step : " + str(counter) + " ##############")
-        counter += 1
+        print("\n\n############## Step : " + str(step_counter) + " ##############")
+        step_counter += 1
         temp_clusters_list = [[] for x in range(k)]
         for i in range(len(clusters)):
             for m in range(len(clusters[i])):
@@ -77,17 +77,18 @@ def k_means(dataset):
                         min_distance = distance
                         nearest_cluster = j
                 temp_clusters_list[nearest_cluster].append(clusters[i][m])
-            if i != nearest_cluster:
-                optimal_condition = False
+                if i != nearest_cluster:
+                    optimal_condition = False
 
         clusters = np.array(temp_clusters_list)
         centroids = calculate_centroids(clusters)
 
-        print("############## Clusters ##############")
+        print("############## Cluster sizes ##############")
         for i in range(k):
             print(len(clusters[i]))
         print("############## Centroids #############")
         print(centroids)
-
+        if optimal_condition:
+            pass
 
 k_means(dfs)
