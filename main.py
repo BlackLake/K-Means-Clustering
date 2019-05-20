@@ -51,6 +51,8 @@ def euclidean_distance(a, b, length):
 
 
 def k_means(dataset):
+    # uncomment to eliminate 0 length cluster problem
+    # global k
     clusters = initialize_clusters(dataset)
     centroids = calculate_centroids(clusters)
 
@@ -80,6 +82,12 @@ def k_means(dataset):
                 if i != nearest_cluster:
                     optimal_condition = False
 
+        # uncomment to eliminate 0 length cluster problem
+        # for i in range(len(temp_clusters_list)):
+        #     if len(temp_clusters_list[i]) == 0:
+        #         del temp_clusters_list[i]
+        #         k -= 1
+
         clusters = np.array(temp_clusters_list)
         centroids = calculate_centroids(clusters)
 
@@ -90,5 +98,6 @@ def k_means(dataset):
         print(centroids)
         if optimal_condition:
             pass
+
 
 k_means(dfs)
